@@ -31,13 +31,40 @@ public class QueryExpander
 			precision = console.readLine("Please enter a valid precision(between 0 and 1): ");
 		}
 		
-		try {
-			String bingResults = searchBing(input);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		boolean complete = false;
 		
+		while (!complete)
+		{
+			try
+			{
+				String bingResults = searchBing(input);
+			}
+			catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			SearchResult[] searchResults = parseTenSearchResults(bingResults);
+			int numOfRelevant = 0;
+			for (SearchResult result : searchResults)
+			{
+				boolean relevant = isResultRelevant(result);
+				if (relevant)
+				{
+					numOfRelevant++;
+				}
+			}
+			
+			if (numOfRelevant < (Double.parseDouble(precision) * 10))
+			{
+				String[] additionalTerms = extractNewTerms(searchResults);
+			}
+			else
+			{
+				complete = true;
+			}
+		}
 	}
 	
 	private String searchBing(String query) throws IOException
@@ -84,6 +111,34 @@ public class QueryExpander
 		}
 	}
 
+	private class SearchResult
+	{
+		private String title;
+		private String link; 
+		private String description;
+		
+		public SearchResult(String title, String link, String description)
+		{
+			this.title = title;
+			this.link = link;
+			this.description = description;
+		}
+		
+		public String getTitle()
+		{
+			return this.title;
+		}
+		
+		public String getLink()
+		{
+			return this.link;
+		}
+		
+		public String getDescription()
+		{
+			return this.description;
+		}
+	}
 }
 
 
